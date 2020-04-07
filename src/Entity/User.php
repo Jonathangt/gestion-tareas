@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="users")
  * @ORM\Entity
  */
-class User
+class User implements UserInterface
 {
 
     /**
@@ -49,27 +51,36 @@ class User
      * @var string|null
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=true, options={"default"="NULL"})
+     * @Assert\NotBlank
+     * @Assert\Regex("/[a-zA-Z ]+/")
      */
-    private $name = 'NULL';
+    private $name = '';
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="surname", type="string", length=200, nullable=true, options={"default"="NULL"})
+     * @Assert\NotBlank
+     * @Assert\Regex("/[a-zA-Z ]+/")
      */
-    private $surname = 'NULL';
+    private $surname = '';
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="email", type="string", length=255, nullable=true, options={"default"="NULL"})
+     * @Assert\NotBlank
+	 * @Assert\Email(
+	 *	    message = "El email '{{ value }}' no es valido"
+	 * )
      */
-    private $email = 'NULL';
+    private $email = '';
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true, options={"default"="NULL"})
+     * @Assert\NotBlank
      */
     private $password = 'NULL';
 
@@ -145,12 +156,12 @@ class User
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt()
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    public function setCreatedAt($createdAt): self
     {
         $this->createdAt = $createdAt;
 
@@ -164,7 +175,24 @@ class User
 	public function getTasks(): Collection
 	{
 		return $this->tasks;
+    }
+
+    //metodos de la interfaz implementada
+    
+    public function getUsername(){
+		return $this->email;
 	}
+	
+	public function getSalt(){
+		return null;
+	}
+	
+	public function getRoles(){
+		return array('ROLE_USER');
+	}
+    
+    //metodo necesario para que la autenticacion funcione
+	public function eraseCredentials(){}
 
 
 }
