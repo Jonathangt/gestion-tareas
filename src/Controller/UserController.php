@@ -17,41 +17,47 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UserController extends AbstractController
 {
-    
+   
     public function register(Request $request, UserPasswordEncoderInterface $encoder)
     {
-        //crear formulario
-        $user = new User();
-        $form = $this->createForm(RegisterType::class, $user);
-
-        //vinculamos el form con el objeto
-        $form->handleRequest($request);
-
-        //si fue enviado recogo los datos
-        if($form->isSubmitted() && $form->isValid()){
-            //var_dump($user);
-            //modificamos el obj para guardarlo y ciframos el pass
-            $user->setRole('ROLE_USER');
-            $encoded = $encoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($encoded);
-            //$date_now = (new \DateTime())->format('d-m-Y H:i:s');
-            $user->setCreatedAt(new \DateTime('now'));
-
-            //guardar usuario
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-        }
+		// Crear formulario
+		$user = new User();
+		$form = $this->createForm(RegisterType::class, $user);
+		
+		// Rellenar el objeto con los datos del form
+		$form->handleRequest($request);
+		
+		// Comprobar si el form se ha enviado
+		if($form->isSubmitted() && $form->isValid()){
+							  
+			// Modificando el objeto para guardarlo
+			$user->setRole('ROLE_USER');
+			$user->setCreatedAt(new \Datetime('now'));
+			
+			// Cifrar contraseña
+			$encoded = $encoder->encodePassword($user, $user->getPassword());
+			$user->setPassword($encoded);
+																   
+													  
+			
+			// Guardar usuario
+			$em = $this->getDoctrine()->getManager();
+			$em->persist($user);
+			$em->flush();
+			
+			return $this->redirectToRoute('tasks');
+		}
+		
         return $this->render('user/register.html.twig', [
-           'form' => $form->createView()
+			'form' => $form->createView()
         ]);
     }
-
-    public function login(AuthenticationUtils $autenticationUtils){
+	
+	public function login(AuthenticationUtils $autenticationUtils){
 		$error = $autenticationUtils->getLastAuthenticationError();
-		//guardo el nombre de usuario que ha fallado la autenticacion
+		
 		$lastUsername = $autenticationUtils->getLastUsername();
-		//envio a la vista las variables
+		
 		return $this->render('user/login.html.twig', array(
 			'error' => $error,
 			'last_username' => $lastUsername

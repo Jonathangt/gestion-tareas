@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Tasks
+ * Task
  *
  * @ORM\Table(name="tasks", indexes={@ORM\Index(name="fk_task_user", columns={"user_id"})})
  * @ORM\Entity
@@ -24,42 +24,40 @@ class Task
     /**
      * @var string|null
      *
-     * @ORM\Column(name="title", type="string", length=255, nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="title", type="string", length=255, nullable=true)
      */
-    private $title = 'NULL';
+    private $title;
 
     /**
      * @var string|null
      *
-     * @ORM\Column(name="content", type="text", length=65535, nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="content", type="text", length=65535, nullable=true)
      */
-    private $content = 'NULL';
+    private $content;
 
     /**
      * @var string|null
      *
-     * @ORM\Column(name="priority", type="string", length=20, nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="priority", type="string", length=20, nullable=true)
      */
-    private $priority = 'NULL';
+    private $priority;
 
     /**
      * @var int|null
      *
-     * @ORM\Column(name="hours", type="integer", nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="hours", type="integer", nullable=true)
      */
-    private $hours = 'NULL';
+    private $hours;
 
     /**
      * @var \DateTime|null
      *
-     * @ORM\Column(name="created_at", type="datetime", nullable=true, options={"default"="NULL"})
+     * @ORM\Column(name="created_at", type="datetime", nullable=true)
      */
-    private $createdAt = 'NULL';
-
-    //"App\Entity\User" linea 62 probar
+    private $createdAt;
 
     /**
-     * @var \Users
+     * @var \User
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="tasks")
      * @ORM\JoinColumns({
@@ -138,7 +136,7 @@ class Task
         return $this->user;
     }
 
-    public function setUser(?Users $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 
